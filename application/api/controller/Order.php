@@ -22,6 +22,9 @@ class Order extends Controller
      */
     public function create(Request $request)
     {
+        if (!$request->isPost()) {
+            return response_error('请求方式错误');
+        }
         $data = $request->param();
         $goods = new BoxGoods();
         $goods_detail = $goods->field('conversion_price,merchandise_type')->find($data['goods_id']);//商品信息

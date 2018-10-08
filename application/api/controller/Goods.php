@@ -21,6 +21,9 @@ class Goods extends Controller
 
     public function goods_list(Request $request)
     {
+        if (!$request->isPost()) {
+            return response_error('请求方式错误');
+        }
         $goods = new BoxGoods();
         $goods_list['goods_list'] = $goods->field('goods_id,goods_name,true_price,conversion_price')
             ->where(['status' => 1])->where('inventory', '>', 0)->where('begin_time', '<=', date('Y-m-d H:i:s'))
@@ -35,9 +38,13 @@ class Goods extends Controller
 
     public function goods_detail(Request $request)
     {
+        if (!$request->isPost()) {
+            return response_error('请求方式错误');
+        }
         $goods_id = $request->param('goods_id');
         $member_id = $request->param('member_id');
-        $data['goods'] = (new BoxGoods())->field('goods_id,conversion_price,inventory,begin_time,end_time,one_day_conversion,member_conversion,merchandise_type')->find($goods_id);
+        $data['goods'] = (new BoxGoods())->field('goods_id,conversion_price,inventory,
+        begin_time,end_time,one_day_conversion,member_conversion,merchandise_type')->find($goods_id);
         $data['goods']['goods_marque'] = (new BoxGoodsMarque())->field('marque_name')->where('goods_id', $goods_id)->where('status', 1)->select();
         $data['goods']['goods_imgs'] = (new BoxGoodsImgs())->field('goods_imgs')->where('goods_id', $goods_id)
             ->where('status', 1)->order('img_weight', 'desc')->select();
@@ -67,6 +74,7 @@ class Goods extends Controller
         if (intval($data['goods']['inventory']) <= 0) {
             return response_data(0, '失败，当前商品已售罄！', $data);
         }
+
 
         return response_data(1, '成功', $data);
     }

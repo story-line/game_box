@@ -16,6 +16,9 @@ class Member extends Controller
 {
     public function index(Request $request)
     {
+        if (!$request->isPost()) {
+            return response_error('请求方式错误');
+        }
         $member_id = $request->param('member_id', 1);
         $member = new BoxMember();
         $member_list = $member->field('member_id,nick_name,photo,gold_num,red_money')->where('member_id',$member_id)->find()->toArray();

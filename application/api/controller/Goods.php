@@ -43,7 +43,7 @@ class Goods extends Controller
         }
         $goods_id = $request->param('goods_id');
         $member_id = $request->param('member_id');
-        $data['goods'] = (new BoxGoods())->field('goods_id,conversion_price,inventory,
+        $data['goods'] = (new BoxGoods())->field('goods_id,goods_name,conversion_price,inventory,
         begin_time,end_time,one_day_conversion,member_conversion,merchandise_type')->find($goods_id);
         $data['goods']['goods_marque'] = (new BoxGoodsMarque())->field('marque_name')->where('goods_id', $goods_id)->where('status', 1)->select();
         $data['goods']['goods_imgs'] = (new BoxGoodsImgs())->field('goods_imgs')->where('goods_id', $goods_id)
@@ -60,8 +60,8 @@ class Goods extends Controller
             }
         }
         if (intval($data['goods']['member_conversion']) > 0) {
-            $member_order_count = (new BoxOrder())->where('member_id', $member_id)->count();
-            if (intval($member_order_count) > intval($data['goods']['member_conversion'])) {
+            $member_order_count = (new BoxOrder())->where('member_id', $member_id)->where('goods_id', $goods_id)->count();
+            if (intval($member_order_count) >= intval($data['goods']['member_conversion'])) {
                 return response_data(0, '您的兑换次数不足！', $data);
             }
         }

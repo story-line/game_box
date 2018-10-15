@@ -80,7 +80,7 @@ class Goods extends Controller
         if (intval($data['goods']['inventory']) <= 0) {
             return response_data(0, '失败，当前商品已售罄！', $data);
         }
-
+        echo json_encode();
 
         return response_data(1, '成功', $data);
     }
